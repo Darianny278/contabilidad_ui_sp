@@ -1,9 +1,9 @@
-import http from "../axios";
+import { fetchClient } from "../axios";
 
 export default {
   async getCuentaContables() {
     try {
-      const res = await http.get(`/CuentaContable`);
+      const res = await fetchClient().get(`/CuentaContable`);
       return res.data.data;
     } catch (err) {
       console.log(err);
@@ -13,7 +13,7 @@ export default {
 
   async getCuentaContableById(id) {
     try {
-      return await http.get(`/CuentaContable/${id}`);
+      return await fetchClient().get(`/CuentaContable/${id}`);
     } catch (err) {
       console.log(err);
       throw err;
@@ -22,7 +22,7 @@ export default {
 
   async addCuentaContable(cuentaContable) {
     try {
-      return await http.post(`/CuentaContable`, cuentaContable);
+      return await fetchClient().post(`/CuentaContable`, cuentaContable);
     } catch (err) {
       console.log(err);
       throw err;
@@ -31,7 +31,7 @@ export default {
 
   async updateCuentaContable(cuentaContable) {
     try {
-      return await http.put(`/CuentaContable/${cuentaContable.id}`, cuentaContable);
+      return await fetchClient().put(`/CuentaContable/${cuentaContable.id}`, cuentaContable);
     } catch (err) {
       console.log(err);
       throw err;
@@ -40,7 +40,7 @@ export default {
 
   async removeCuentaContable(id) {
     try {
-      return await http.delete(`/CuentaContable/${id}`);
+      return await fetchClient().delete(`/CuentaContable/${id}`);
     } catch (err) {
       console.log(err);
       throw err;

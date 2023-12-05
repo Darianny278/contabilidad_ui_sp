@@ -25,8 +25,8 @@
             color: "#FFA726"
           },
           {
-            title: "Moneda",
-            route: "/monedas",
+            title: "Asientos Contables",
+            route: "/asientosContables",
             color: "#EF5350"
           },
           {

@@ -1,9 +1,9 @@
-import http from "../axios";
+import { fetchClient, fetchExternalClient } from "../axios";
 
 export default {
   async getMonedas() {
     try {
-      const res = await http.get(`/Moneda`);
+      const res = await fetchClient().get(`/Moneda`);
       return res.data.data;
     } catch (err) {
       console.log(err);
@@ -13,7 +13,7 @@ export default {
 
   async getMonedaById(id) {
     try {
-      return await http.get(`/Moneda/${id}`);
+      return await fetchClient().get(`/Moneda/${id}`);
     } catch (err) {
       console.log(err);
       throw err;
@@ -22,7 +22,7 @@ export default {
 
   async addMoneda(moneda) {
     try {
-      return await http.post(`/Moneda`, moneda);
+      return await fetchClient().post(`/Moneda`, moneda);
     } catch (err) {
       console.log(err);
       throw err;
@@ -31,7 +31,7 @@ export default {
 
   async updateMoneda(moneda) {
     try {
-      return await http.put(`/Moneda/${moneda.id}`, moneda);
+      return await fetchClient().put(`/Moneda/${moneda.id}`, moneda);
     } catch (err) {
       console.log(err);
       throw err;
@@ -40,10 +40,20 @@ export default {
 
   async removeMoneda(id) {
     try {
-      return await http.delete(`/Moneda/${id}`);
+      return await fetchClient().delete(`/Moneda/${id}`);
     } catch (err) {
       console.log(err);
       throw err;
     }
-  }
+  },
+
+  async getMonedasConTasaDeCambio() {
+    try {
+      const res = await fetchExternalClient().get(`/tasacambiaria`);
+      return res.data;
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
+  },
 }

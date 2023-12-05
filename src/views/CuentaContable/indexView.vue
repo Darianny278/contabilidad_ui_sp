@@ -25,11 +25,19 @@
             v-model="currentItem.tipoId"
             label="Tipo de Cuenta"
           ></v-select>
+          <v-select
+            :items="items"
+            item-text="descripcion"
+            item-value="id"
+            v-model="currentItem.cuentaMayorId"
+            label="Cuenta Mayor"
+            clearable
+          ></v-select>
           <v-switch v-model="currentItem.estado" label="Estado"></v-switch>
-          <v-text-field
-            v-model="currentItem.permiteMov"
-            label="Permite Movimientos"
-          ></v-text-field>
+          <v-radio-group v-model="currentItem.permiteMov" label="Permite movimientos">
+            <v-radio label="Sí" value="S"></v-radio>
+            <v-radio label="No" value="N"></v-radio>
+          </v-radio-group>
           <v-text-field
             v-model="currentItem.nivel"
             label="Nivel"
@@ -55,6 +63,9 @@
       hide-default-footer
       :items-per-page="-1"
     >
+      <template v-slot:item.tipoId="{item}">
+        {{ getTipoCuentaNombre(item.tipoId) }}
+      </template>
       <template v-slot:item.actions="{ item }">
         <v-btn icon color="info" @click="openEditDialog(item)">
           <v-icon>mdi-pencil</v-icon>
@@ -87,6 +98,7 @@ export default {
       headers: [
         { text: "Descripcion", value: "descripcion" },
         { text: "Tipo de Cuenta", value: "tipoId" },
+        { text: "Balance", value: "balance" },
         { text: "Estado", value: "estado" },
         { text: "Actions", value: "actions", sortable: false },
       ],
@@ -106,6 +118,10 @@ export default {
     async getLastId() {
       const lastItem = this.items[this.items.length - 1];
       return lastItem ? lastItem.id + 1 : 1;
+    },
+    getTipoCuentaNombre(tipoId) {
+      const tipo = this.tipoCuentas.find(tc => tc.id === tipoId);
+      return tipo ? tipo.descripcion : 'Desconocido';
     },
     openCreateDialog() {
       this.currentAction = "Crear";

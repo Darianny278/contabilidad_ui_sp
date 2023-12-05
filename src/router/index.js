@@ -5,6 +5,8 @@ import AuxiliaresView from '../views/Auxiliares/indexView.vue'
 import MonedasView from '../views/Moneda/indexView.vue'
 import TipoCuentaView from '../views/TipoCuenta/indexView.vue'
 import CuentaContableView from '../views/CuentaContable/indexView.vue'
+import TasaCambiaria from '@/views/Moneda/TasaCambiaria.vue'
+import AsientosContablesView from '@/views/AsientosContables/IndexView.vue'
 
 Vue.use(VueRouter)
 
@@ -33,6 +35,16 @@ const routes = [
     path: '/cuentaContable',
     name: 'cuentaContable',
     component: CuentaContableView
+  },
+  {
+    path: '/asientosContables',
+    name: 'asientosContables',
+    component: AsientosContablesView
+  },
+  {
+    path: '/tasaCambiaria',
+    name: 'tasaCambiaria',
+    component: TasaCambiaria
   },
 ]
 

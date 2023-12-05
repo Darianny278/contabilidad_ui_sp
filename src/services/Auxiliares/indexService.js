@@ -1,9 +1,9 @@
-import http from "../axios";
+import { fetchClient } from "../axios";
 
 export default {
   async getAuxiliares() {
     try {
-      const res = await http.get(`/Auxiliares`);
+      const res = await fetchClient().get(`/Auxiliares`);
       return res.data.data;
     } catch (err) {
       console.log(err);
@@ -13,7 +13,7 @@ export default {
 
   async getAuxiliarById(id) {
     try {
-      return await http.get(`/Auxiliares/${id}`);
+      return await fetchClient().get(`/Auxiliares/${id}`);
     } catch (err) {
       console.log(err);
       throw err;
@@ -22,7 +22,7 @@ export default {
 
   async addAuxiliar(auxiliar) {
     try {
-      return await http.post(`/Auxiliares`, auxiliar);
+      return await fetchClient().post(`/Auxiliares`, auxiliar);
     } catch (err) {
       console.log(err);
       throw err;
@@ -31,7 +31,7 @@ export default {
 
   async updateAuxiliar(auxiliar) {
     try {
-      return await http.put(`/Auxiliares/${auxiliar.id}`, auxiliar);
+      return await fetchClient().put(`/Auxiliares/${auxiliar.id}`, auxiliar);
     } catch (err) {
       console.log(err);
       throw err;
@@ -40,7 +40,7 @@ export default {
 
   async removeAuxiliar(id) {
     try {
-      return await http.delete(`/Auxiliares/${id}`);
+      return await fetchClient().delete(`/Auxiliares/${id}`);
     } catch (err) {
       console.log(err);
       throw err;
