@@ -3,7 +3,9 @@
     <h2 class="text-red">Asientos Contables</h2>
 
     <v-row justify="end">
-      <v-btn color="primary" class="mb-3" @click="resetFilters">
+      <v-btn color="success" class="mr-3" @click="dialog = true">Crear Asiento Contable</v-btn>
+
+      <v-btn color="primary" class="ml-3 mb-3" @click="resetFilters">
         Restablecer Filtros
       </v-btn>
     </v-row>
@@ -59,12 +61,65 @@
       </template>
 
     </v-data-table>
+
+    <v-dialog v-model="dialog" max-width="600px">
+    <v-card>
+      <v-card-title>Crear Asiento Contable</v-card-title>
+      <v-card-text>
+        <v-container>
+          <v-row>
+            <v-col cols="12">
+              <v-text-field label="Descripción" v-model="newAsiento.descripcion"></v-text-field>
+            </v-col>
+
+            <v-col cols="12">
+              <v-select
+                label="Auxiliar"
+                :items="auxiliares"
+                item-text="descripcion"
+                item-value="id"
+                v-model="newAsiento.idAuxiliar"
+              ></v-select>
+            </v-col>
+
+            <v-col cols="12">
+              <v-select
+                label="Moneda"
+                :items="monedas"
+                item-text="codigo_moneda"
+                item-value="id"
+                v-model="newAsiento.idMonedaWS"
+              ></v-select>
+            </v-col>
+
+            <v-col cols="12" v-for="(cuenta, index) in newAsiento.cuentas" :key="index">
+              <v-select
+                label="Cuenta Contable"
+                :items="cuentasContables"
+                item-text="descripcion"
+                item-value="id"
+                v-model="cuenta.idCuentaContable"
+              ></v-select>
+              <v-text-field label="Monto" type="number" v-model="cuenta.monto"></v-text-field>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="blue darken-1" text @click="dialog = false">Cancelar</v-btn>
+        <v-btn color="blue darken-1" text @click="createAsiento">Crear</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
   </v-container>
 </template>
 
 <script>
 import asientosContablesService from "@/services/AsientosContables/indexService.js";
 import auxiliaresService from '@/services/Auxiliares/indexService'
+import monedasService from '@/services/Moneda/indexService.js'
+import cuentaContableService from "@/services/CuentaContable/indexService.js";
 
 export default {
   data() {
@@ -82,7 +137,25 @@ export default {
         { text: "Fecha", value: "fecha" },
         { text: "Estado", value: "estado" },
       ],
+      dialog: false,
+      newAsiento: {
+        descripcion: '',
+        idAuxiliar: null,
+        idMonedaWS: 0,
+        cuentas: [
+          { idCuentaContable: null, descripcion: '', tipoMovimiento: 'DB', monto: null },
+          { idCuentaContable: null, descripcion: '', tipoMovimiento: 'CR', monto: null }
+        ]
+      },
+      cuentasContables: [],
+      monedas: []
     };
+  },
+  watch: {
+    'newAsiento.cuentas': {
+      handler: 'updateCuentaDescriptions',
+      deep: true
+    }
   },
   computed: {
     filteredItems() {
@@ -109,13 +182,30 @@ export default {
   async created() {
     await this.fetchAsientosContables();
     await this.fetchAuxiliares();
+    await this.fetchMonedas();
+    await this.fetchCuentasContables();
   },
   methods: {
+    async createAsiento() {
+      try {
+        await asientosContablesService.addAsientosContables(this.newAsiento);
+        this.fetchAsientosContables()
+      } catch (error) {
+        console.log(error);
+      }
+      this.dialog = false;
+    },
     async fetchAsientosContables() {
       this.items = await asientosContablesService.getAsientosContables();
     },
+    async fetchCuentasContables() {
+      this.cuentasContables = await cuentaContableService.getCuentaContables();
+    },
     async fetchAuxiliares() {
       this.auxiliares = await auxiliaresService.getAuxiliares();
+    },
+    async fetchMonedas() {
+      this.monedas = await monedasService.getMonedasConTasaDeCambio()
     },
     getAuxiliarNombre(auxiliarId) {
       const auxiliar = this.auxiliares.find(tc => tc.id === auxiliarId);
@@ -139,6 +229,20 @@ export default {
       this.dateRange = [];
       this.dateRangeText = '';
       this.fetchAsientosContables();
+    },
+    updateCuentaDescriptions(newCuentas, oldCuentas) {
+      newCuentas.forEach((cuenta, index) => {
+        const oldCuenta = oldCuentas[index];
+        if (cuenta.idCuentaContable && (!oldCuenta || cuenta.idCuentaContable !== oldCuenta.idCuentaContable)) {
+          const cuentaContableSeleccionada = this.cuentasContables.find(c => c.id === cuenta.idCuentaContable);
+          if (cuentaContableSeleccionada) {
+            this.$set(this.newAsiento.cuentas, index, {
+              ...cuenta,
+              descripcion: cuentaContableSeleccionada.descripcion
+            });
+          }
+        }
+      });
     },
   },
 };

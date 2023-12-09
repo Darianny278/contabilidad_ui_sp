@@ -10,4 +10,13 @@ export default {
       throw err;
     }
   },
+
+  async addAsientosContables(asiento) {
+    try {
+      return await fetchClient().post(`/AsientosContables/InsertarAsientoContable`, asiento);
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
+  },
 }

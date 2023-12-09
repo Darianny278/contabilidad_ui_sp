@@ -80,6 +80,7 @@ export default {
     },
     async saveItem() {
       if (this.currentAction === "Crear") {
+        this.currentItem.id = await this.getLastId();
         await auxiliaresService.addAuxiliar(this.currentItem);
       } else {
         await auxiliaresService.updateAuxiliar(this.currentItem);
@@ -90,6 +91,10 @@ export default {
     async deleteItem(item) {
       await auxiliaresService.removeAuxiliar(item.id);
       this.fetchAuxiliares();
+    },
+    async getLastId() {
+      const lastItem = this.items[this.items.length - 1];
+      return lastItem ? lastItem.id + 1 : 1;
     },
   },
 };
